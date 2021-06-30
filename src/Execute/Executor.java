@@ -1,11 +1,11 @@
 package Execute;
 
-import leetcode.TowSum01;
+import JavaArch.enclosingPrivate.TestPrivate;
 
 public class Executor {
     public static void main(String[] args) {
         MyRunnable runnable = null;
-        runnable = new TowSum01();
+        runnable = new TestPrivate.TestPrivateInherit();
         if (runnable != null) {
             runnable.run();
         }

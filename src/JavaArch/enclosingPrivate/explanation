@@ -1,0 +1,48 @@
+public class Outer {
+  private int outProp = 8;
+  class Inner {
+    private int inProp = 5;
+  }
+
+  public void accessInnerProp() {
+    System.out.println(new Inner().inProp);
+  }
+
+  public static void main(String[] args) {
+    Outer p = new Outer();
+    p.accessInnerProp();
+  }
+}
+Java语言规范里只说了enclosing class可以访问inner class的private/protected成员，inner class也可以访问enclosing class的private/protected成员，但是没有规定死要如何实现这种访问。JVM规范则在大多数时候都把每个Class都看作等价于top-level的，也就是说不关心enclosing / inner class之间的嵌套关系。对JVM来说，enclosing class和inner class在大部分情况下都是“不相关的两个类”，所以它们之间相互是不能访问对方的private/protected成员的。在实现中，衔接Java语言规范与JVM规范的就是Java源码级编译器（例如javac、ECJ等）。既然规范没规定死要如何实现，各个编译器都可以自己发明自己的办法。下面就说说javac的做法。javac会把上面的代码解糖为类似下面的形式：public class Outer {
+  private int outProp;
+
+  public Outer() {
+    super();
+    this.outProp = 8;
+  }
+
+  public void accessInnerProp() {
+    System.out.println(Outer$Inner.access$000(new Outer$Inner(this)));
+  }
+
+  public static void main(String[] args) {
+    Outer p = new Outer();
+    p.accessInnerProp();
+  }
+}
+
+class Outer$Inner {
+  private int inProp;
+  final /* synthetic */ Outer this$0;
+
+  Outer$Inner(Outer outer) {
+    this.this$0 = outer;
+    super();
+    this.inProp = 5;
+  }
+
+  static /* synthetic */ int access$000(Outer$Inner self) {
+    return self.inProp;
+  }
+}
+所以，简单来说就是在enclosing / inner class之间要访问对方的private/protected成员时，javac会生成合适的“access method”（上面的access$xxx形式的方法）来提供合适的可访问性，这样就绕开了原本的成员的可访问性不足的问题。但这种Java语言与JVM之间的不匹配有时候会让一些程序要用非常蛋疼的代码来实现，特别是需要做动态字节码生成的时候。所以Java核心开发组也有在考虑在未来的Java版本中让JVM能更主动的识别类之间的嵌套关系，并直接在JVM层面上让enclosing / inner class之间有合适的可访问性，这样就不用再依赖Java源码级编译器的magic了。
