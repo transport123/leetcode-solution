@@ -1,3 +1,4 @@
+1,对于内嵌类和外部类之间可以互相访问私有变量/方法的解释
 public class Outer {
   private int outProp = 8;
   class Inner {
@@ -13,7 +14,12 @@ public class Outer {
     p.accessInnerProp();
   }
 }
-Java语言规范里只说了enclosing class可以访问inner class的private/protected成员，inner class也可以访问enclosing class的private/protected成员，但是没有规定死要如何实现这种访问。JVM规范则在大多数时候都把每个Class都看作等价于top-level的，也就是说不关心enclosing / inner class之间的嵌套关系。对JVM来说，enclosing class和inner class在大部分情况下都是“不相关的两个类”，所以它们之间相互是不能访问对方的private/protected成员的。在实现中，衔接Java语言规范与JVM规范的就是Java源码级编译器（例如javac、ECJ等）。既然规范没规定死要如何实现，各个编译器都可以自己发明自己的办法。下面就说说javac的做法。javac会把上面的代码解糖为类似下面的形式：public class Outer {
+Java语言规范里只说了enclosing class可以访问inner class的private/protected成员，inner class也可以访问enclosing class的private/protected成员，
+但是没有规定死要如何实现这种访问。JVM规范则在大多数时候都把每个Class都看作等价于top-level的，也就是说不关心enclosing / inner class之间的嵌套关系。
+对JVM来说，enclosing class和inner class在大部分情况下都是“不相关的两个类”，所以它们之间相互是不能访问对方的private/protected成员的。
+在实现中，衔接Java语言规范与JVM规范的就是Java源码级编译器（例如javac、ECJ等）。既然规范没规定死要如何实现，各个编译器都可以自己发明自己的办法。
+下面就说说javac的做法。
+javac会把上面的代码解糖为类似下面的形式：public class Outer {
   private int outProp;
 
   public Outer() {
@@ -45,4 +51,34 @@ class Outer$Inner {
     return self.inProp;
   }
 }
-所以，简单来说就是在enclosing / inner class之间要访问对方的private/protected成员时，javac会生成合适的“access method”（上面的access$xxx形式的方法）来提供合适的可访问性，这样就绕开了原本的成员的可访问性不足的问题。但这种Java语言与JVM之间的不匹配有时候会让一些程序要用非常蛋疼的代码来实现，特别是需要做动态字节码生成的时候。所以Java核心开发组也有在考虑在未来的Java版本中让JVM能更主动的识别类之间的嵌套关系，并直接在JVM层面上让enclosing / inner class之间有合适的可访问性，这样就不用再依赖Java源码级编译器的magic了。
+所以，简单来说就是在enclosing / inner class之间要访问对方的private/protected成员时，
+javac会生成合适的“access method”（上面的access$xxx形式的方法）来提供合适的可访问性，
+这样就绕开了原本的成员的可访问性不足的问题。
+但这种Java语言与JVM之间的不匹配有时候会让一些程序要用非常蛋疼的代码来实现，特别是需要做动态字节码生成的时候。
+所以Java核心开发组也有在考虑在未来的Java版本中让JVM能更主动的识别类之间的嵌套关系，并直接在JVM层面上让enclosing / inner class之间有合适的可访问性，
+这样就不用再依赖Java源码级编译器的magic了。
+
+2，关于普通内部类不可拥有静态方法或变量的解释。
+
+这里首先要对常量这个概念进行一定的说明，常量在Jvm中是放在常量池中（这是区分于堆栈而单独存在的一块区域）
+常量池则分为静态常量池和运行时常量池
+申明位静态的如public static final int age=10（字面量）的属于class的成员在编译期间就确定了值，也就是在编译期间就等于放入了“常量池”中
+其中方法名称和描述符，字段名称和描述符，类的全限定名属于符号引用量（也就是属于一个类的信息）也会在编译期间就确定这些常量
+而运行时常量池放入的就是 运行阶段才能确定值的常量（日常使用的常量，如String a = "abc")
+
+下面先放两个结论：
+1，普通内部类可以申明静态常量 （因为是编译器常量）
+2，普通内部类继承一个类时，可以直接使用父类的静态变量 （这种情况其实就是正常使用一个类的静态域而已）
+
+网上很多解释都是说，内部类的初始化需要一个外部类对象，但是这个是错的。
+因为这种说法的目标角色是对象，和类是没关系的。我们知道静态的成员是属于类的，这些东西的初始化则是和类加载、类初始化挂钩的。
+因为所有类都已经加载完了
+所以内部类的 类初始化 和外部类本来就是没关系的，不存在说我没有外部类的信息。对于JVM而言没有嵌套类这个概念，所有的类都是top-level的。
+所以从JVM的角度来理解这个问题是没有意义的。
+
+最后得出的比较能接受的解释：这就是Java语音层面的最优规定
+因为内部类不需要这种东西。因为完全可以放在外部类，如果要所有的内部类对象都一致，申明一个外部类的静态变量就行；
+如果要 由同一个外部对象创建出的 内部类对象一致，则申明为一个普通的外部变量就行。
+或许正是考虑到这一点可能会产生二义性，才规定不让申明静态变量（二义性的理解：到底是哪些保持一致呢）
+虽然不能完美的反证，但是这个说法确实也是合理的，make sense的
+
