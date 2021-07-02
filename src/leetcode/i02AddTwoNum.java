@@ -2,8 +2,8 @@ package leetcode;
 
 
 import Execute.MyRunnable;
-
-public class AddTwoNum02 implements MyRunnable {
+// 简单的大整数相加，要注意优化程序设计细节
+public class i02AddTwoNum implements MyRunnable {
 
 
     public ListNode addTwoNum(ListNode l1, ListNode l2) {

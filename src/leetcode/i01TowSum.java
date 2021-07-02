@@ -5,7 +5,11 @@ import Execute.MyRunnable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TowSum01 implements MyRunnable {
+
+//描述：寻找数组中相加等于目标值的两个数
+//核心：是一个查找问题，使用Hash是关键
+//hash-map是以<k,v>存储的，其中只对K做了hash算法 所以在查询v时其时间复杂度并不理想
+public class i01TowSum implements MyRunnable {
     @Override
     public void run() {
         int[] result = twoSumV3(new int[]{2, 3, 4, 5, 5}, 10);
