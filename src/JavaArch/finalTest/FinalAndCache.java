@@ -55,7 +55,10 @@ public class FinalAndCache implements MyRunnable {
         //正确的做法在使用某个object tostring或 getstring时，可能内部都是用char来在堆区构建新的String对象，这种情况是不会放在常量池中的
 
 
-
+        //个人理解：事实上，运行时常量池是 具体的类自己设计出的一种机制，它并不是jvm本身就实现的一个功能
+        //比如 final ClassA obj = new ClassA(); 这个对象肯定会new出一个新对象，它也不会加入“常量池”中
+        //并不是打上了final标记就放在常量池中，final只是表示这是一个不可变的变量
+        //String,Integer的常量池都是自己类内部实现的 本质上还是在堆区
 
     }
 
