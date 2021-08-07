@@ -1,6 +1,7 @@
-package JavaArch.enclosingPrivate;
+package com.samon.leetcodelib.leetcode_solution.src.JavaArch.enclosingPrivate;
 
-import Execute.MyRunnable;
+
+import com.samon.leetcodelib.leetcode_solution.src.Execute.MyRunnable;
 
 public class TestPrivate implements MyRunnable {
 

@@ -1,6 +1,6 @@
-package JavaArch.enclosingPrivate;
+package com.samon.leetcodelib.leetcode_solution.src.JavaArch.enclosingPrivate;
 
-import JavaArch.enclosingPrivate.TestPrivate;
+
 
 public class TestPrivateOuter extends TestPrivate {
 

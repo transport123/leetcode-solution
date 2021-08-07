@@ -1,4 +1,7 @@
-package leetcode.nocategory;
+package com.samon.leetcodelib.leetcode_solution.src.leetcode.nocategory;
+
+
+
 //偶然间想到的，如何求一个集合的所有子集
 //以及求M个元素的集合的N个子集的方法
 //1，分治递归的思想

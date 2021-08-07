@@ -1,6 +1,7 @@
-package JavaArch.finalTest;
+package com.samon.leetcodelib.leetcode_solution.src.JavaArch.finalTest;
 
-import Execute.MyRunnable;
+
+import com.samon.leetcodelib.leetcode_solution.src.Execute.MyRunnable;
 
 public class TestStaticInvoke implements MyRunnable {
 

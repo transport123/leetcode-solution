@@ -1,7 +1,8 @@
-package leetcode;
+package com.samon.leetcodelib.leetcode_solution.src.leetcode;
 
 
-import Execute.MyRunnable;
+
+import com.samon.leetcodelib.leetcode_solution.src.Execute.MyRunnable;
 // 简单的大整数相加，要注意优化程序设计细节
 public class i02AddTwoNum implements MyRunnable {
 

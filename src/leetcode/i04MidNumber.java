@@ -1,6 +1,8 @@
-package leetcode;
+package com.samon.leetcodelib.leetcode_solution.src.leetcode;
 
-import Execute.MyRunnable;
+
+
+import com.samon.leetcodelib.leetcode_solution.src.Execute.MyRunnable;
 
 public class i04MidNumber implements MyRunnable {
     @Override
