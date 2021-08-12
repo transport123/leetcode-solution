@@ -44,7 +44,7 @@ public class i05LongestPalindromicSubString implements MyRunnable {
 
         }
         return result;
-    }// 对称式方法
+    }// 对称式方法 n2
 
     //to-do 利用寻找公共子串的动态规划（矩阵对角线）
 
