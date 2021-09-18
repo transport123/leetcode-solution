@@ -8,7 +8,7 @@ public class Executor {
         MyRunnable runnable = null;
         runnable = new i06zShift();
         if (runnable != null) {
-            runnable.run();
+            runnable.run();  
         }
     }
 }
