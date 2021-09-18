@@ -1,7 +1,6 @@
 package com.samon.leetcodelib.leetcode_solution.src.leetcode;
 
 
-
 import com.samon.leetcodelib.leetcode_solution.src.Execute.MyRunnable;
 
 public class i04MidNumber implements MyRunnable {
@@ -9,25 +8,77 @@ public class i04MidNumber implements MyRunnable {
     public void run() {
 
         int[] num1 = {1, 4, 5, 7, 8, 9};
-        int[] num2 = {3, 4, 6, 12};
+        int[] num2 = {3};
         //1 2 3 3 4 4 5
-        double x = easyVersion(num1, num2);
+        double x = findMedianSortedArrays(num1, num2);
         System.out.println(x);
     }
 
 
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-
-
-        return 0;
+        if ((nums1.length + nums2.length) % 2 == 0) {
+            //偶数返回平均值
+            double k1 = getKthElement(nums1, nums2, (nums1.length + nums2.length) / 2);
+            double k2 = getKthElement(nums1, nums2, (nums1.length + nums2.length) / 2 + 1);
+            return (k1 + k2) / 2;
+        } else {
+            return getKthElement(nums1, nums2, (nums1.length + nums2.length) / 2 + 1);
+        }
 
     }
 
 
-    public double KthVersion(int[] nums1, int[] nums2)
-    {
+    public double BinarySearchVersion(int[] nums1, int[] nums2) {
         return 0;
     }
+
+    //非递归方法
+    public int getKthElement(int[] nums1, int[] nums2, int k) {//寻找两个数组第K大的数
+        if (k > nums1.length + nums2.length)
+            return 0;
+        //left代表已经排除掉的数组的最后一个元素
+        int left1 = -1;
+        int left2 = -1; //当前数组开始的位置，因为会根据比较截取掉k/2
+        int right1 = 0;
+        int right2 = 0;//当前需要比较的位置
+        while (true) {
+
+            //当left已经到达了数组的末尾，说明这个数组已经完全被排除
+            //先判断数组的边界情况，避免在k=1的情况下访问出界
+            if (left1 == nums1.length - 1)
+                return nums2[k  +left2];
+            if (left2 == nums2.length - 1)
+                return nums1[k  +left1];
+
+            if (k == 1)//取出当前的最小的即可
+                return Math.min(nums1[left1 + 1], nums2[left2 + 1]);
+
+
+            //先考虑不越界的正常情况
+            right1 = Math.min(left1 + k / 2, nums1.length - 1);
+            right2 = Math.min(left2 + k / 2, nums2.length - 1);
+            if (nums1[right1] >= nums2[right2]) {//如何优雅的处理数组越界
+                //谁小，排除谁
+
+                k = k - (right2 - left2);
+                left2 = right2;
+
+
+            } else {
+                k = k - (right1 - left1);
+                left1 = right1;
+            }
+            //1    2 3 4
+        }
+
+        //k=1的时候是返回触发条件 第一大，说明直接取出比较值中的小值就是返回值
+        //且K的变化不能直接用K/2，因为1，存在奇偶的情况，我们一次只能排除X个数，
+        //本质上是在剩下的数中找到第K-X大的数
+        //2，存在数组越界的情况，X可能因为数组边界而小于K/2
+
+    }
+
+    //递归版本
 
     public double easyVersion2(int[] nums1, int[] nums2) {//复杂度为n+m
         int tmp_1 = 0;
